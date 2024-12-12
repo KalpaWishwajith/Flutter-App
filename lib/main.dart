@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'joke_service.dart'; // Import the JokeService file
+import 'joke_service.dart';
 
 void main() {
   runApp(const JokeApp());
@@ -14,7 +14,7 @@ class JokeApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Joke App',
       theme: ThemeData(
-        primarySwatch: Colors.purple,
+        primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: 'Joke App'),
     );
@@ -27,11 +27,12 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final JokeService _jokeService = JokeService(); // Initialize JokeService
+  final JokeService _jokeService = JokeService();
   List<dynamic> _jokes = [];
   bool _isLoading = false;
 
@@ -41,8 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     try {
-      final jokes =
-          await _jokeService.fetchJokes(); // Fetch jokes using JokeService
+      final jokes = await _jokeService.fetchJokes();
       setState(() {
         _jokes = jokes;
       });
@@ -57,8 +57,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,15 +70,11 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             const Text(
               'Welcome to the Joke App!',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _isLoading ? null : fetchJokes,
-              child: _isLoading
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text('Fetch Jokes'),
             ),
             const SizedBox(height: 16),
             Expanded(
@@ -88,19 +82,40 @@ class _MyHomePageState extends State<MyHomePage> {
                 itemCount: _jokes.length,
                 itemBuilder: (context, index) {
                   final joke = _jokes[index];
-                  return Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        joke['setup'] != null
-                            ? '${joke['setup']} - ${joke['delivery']}'
-                            : joke['joke'] ?? 'No joke',
-                        style: const TextStyle(fontSize: 16),
+                  return SizedBox(
+                    width: double.infinity,
+                    child: Card(
+                      color: Colors.grey[200],
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          joke['setup'] != null
+                              ? '${joke['setup']} - ${joke['delivery']}'
+                              : joke['joke'] ?? 'No joke',
+                          style: const TextStyle(fontSize: 16),
+                        ),
                       ),
                     ),
                   );
                 },
               ),
+            ),
+            ElevatedButton(
+              onPressed: _isLoading ? null : fetchJokes,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              child: _isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text(
+                      'Fetch Jokes',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
             ),
           ],
         ),
